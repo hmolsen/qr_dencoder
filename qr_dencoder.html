@@ -28,75 +28,73 @@
         <p class="text-xl text-gray-500">Generate or Decode QR Codes Instantly</p>
     </header>
 
-    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <main class="max-w-4xl mx-auto space-y-8">
 
-        <!-- QR Code Generator Section -->
-        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl transition duration-300 hover:shadow-3xl border border-blue-100">
-            <h2 class="text-2xl font-bold text-blue-700 mb-6 border-b pb-2">1. Generate QR Code (Text to Image)</h2>
+        <!-- 1. QR Code Decoder Section (Input for decoding) -->
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl transition duration-300 hover:shadow-3xl border border-green-100">
+            <h2 class="text-2xl font-bold text-green-700 mb-6 border-b pb-2">1. Decode QR Code (Image to Text)</h2>
 
-            <div class="mb-4">
-                <label for="qrInput" class="block text-sm font-medium text-gray-700 mb-1">Text or URL to Encode:</label>
-                <textarea id="qrInput" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition shadow-sm resize-none" placeholder="Enter the text, link, or data you want to embed in the QR code..."></textarea>
+            <div class="mb-6 space-y-4">
+                <label for="qrFile" class="block text-sm font-medium text-gray-700 mb-1">Upload QR Code Image:</label>
+                <input type="file" id="qrFile" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 transition" onchange="decodeQRCodeFromImage(event)">
+
+                <div class="flex items-center justify-center">
+                    <div class="w-full border-t border-gray-200"></div>
+                    <span class="px-3 text-sm text-gray-500 bg-white">OR Paste Image</span>
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+
+                <textarea id="qrPasteArea" rows="2" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition shadow-sm resize-none" placeholder="Paste an image here or press Ctrl+V/Cmd+V while focused..."></textarea>
             </div>
+            
+            <div id="decodeStatus" class="p-3 mb-4 bg-yellow-50 text-yellow-800 rounded-lg hidden"></div>
+        </div>
 
+        <!-- 2. Shared Text Field (Output of Decode, Input for Generate) -->
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl shadow-blue-500/10 border border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">2. Shared Content (Input/Output)</h2>
+            <div class="mb-4">
+                <label for="qrInput" class="block text-sm font-medium text-gray-700 mb-1">QR Code Content:</label>
+                <textarea id="qrInput" rows="6" class="w-full p-4 border-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition shadow-inner resize-none font-mono text-base" placeholder="Enter text here to generate a QR code, or paste/upload an image above to see decoded text."></textarea>
+            </div>
+            <!-- The copy button is now associated with the shared input field -->
+            <button onclick="copyDecodedText()" id="copyButton" class="w-full px-4 py-3 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600 transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                Copy Content to Clipboard
+            </button>
+        </div>
+
+
+        <!-- 3. QR Code Generator Section (Output for generation) -->
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl transition duration-300 hover:shadow-3xl border border-blue-100">
+            <h2 class="text-2xl font-bold text-blue-700 mb-6 border-b pb-2">3. Generated QR Code (Text to Image)</h2>
+            
             <button onclick="generateQRCode()" class="w-full px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Generate QR Code
+                Generate QR Code from Above Content
             </button>
 
             <div id="qrOutputContainer" class="mt-8 text-center bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300 min-h-[250px] flex items-center justify-center">
-                <p id="qrPlaceholder" class="text-gray-400">Your generated QR code will appear here.</p>
-                <!-- Now serves as the container for the downloadable <img> element -->
+                <p id="qrPlaceholder" class="text-gray-400">The generated QR code will appear here after clicking 'Generate'.</p>
                 <div id="qrCodeSvg" class="hidden p-2 bg-white rounded-lg shadow-inner max-w-full">
                     <!-- The downloadable <img> will be inserted here -->
                 </div>
             </div>
         </div>
 
-        <!-- QR Code Decoder Section -->
-        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl transition duration-300 hover:shadow-3xl border border-green-100">
-            <h2 class="text-2xl font-bold text-green-700 mb-6 border-b pb-2">2. Decode QR Code (Image to Text)</h2>
-
-            <div class="mb-6 space-y-4">
-                <input type="file" id="qrFile" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 transition" onchange="decodeQRCodeFromImage(event)">
-
-                <div class="flex items-center justify-center">
-                    <div class="w-full border-t border-gray-200"></div>
-                    <span class="px-3 text-sm text-gray-500 bg-white">OR</span>
-                    <div class="w-full border-t border-gray-200"></div>
-                </div>
-
-                <textarea id="qrPasteArea" rows="2" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition shadow-sm resize-none" placeholder="Paste an image here or press Ctrl+V/Cmd+V while focused..."></textarea>
-            </div>
-
-            <div id="decodeStatus" class="p-3 mb-4 bg-yellow-50 text-yellow-800 rounded-lg hidden"></div>
-
-            <div class="mt-8">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Decoded Content:</label>
-                <div id="decodedOutput" class="p-4 bg-green-50 rounded-lg border border-green-300 min-h-[80px] text-gray-800 break-words select-all font-mono text-sm">
-                    <span class="text-gray-400">Decoded text will appear here.</span>
-                </div>
-                <button onclick="copyDecodedText()" id="copyButton" class="mt-3 w-full px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50" disabled>
-                    Copy Decoded Text
-                </button>
-            </div>
-        </div>
     </main>
 
     <canvas id="qrCanvas" class="hidden"></canvas> <!-- Hidden canvas for image processing -->
-
+    
     <script>
         // --- Firebase/API Placeholder Variables ---
-        // Not used for this client-side utility, but required for the environment integrity.
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : '';
         // --- End Placeholder Variables ---
 
 
-        const qrInput = document.getElementById('qrInput');
+        const qrInput = document.getElementById('qrInput'); // Shared Input/Output field
         const qrCodeSvg = document.getElementById('qrCodeSvg');
         const qrPlaceholder = document.getElementById('qrPlaceholder');
-        const decodedOutput = document.getElementById('decodedOutput');
         const qrCanvas = document.getElementById('qrCanvas');
         const decodeStatus = document.getElementById('decodeStatus');
         const copyButton = document.getElementById('copyButton');
@@ -111,6 +109,10 @@
             const text = qrInput.value.trim();
 
             if (!text) {
+                // Clear previous output if input is empty
+                qrCodeSvg.innerHTML = '';
+                qrCodeSvg.classList.add('hidden');
+                qrPlaceholder.classList.remove('hidden');
                 showStatus('Please enter text or a URL to generate a QR code.', 'error');
                 return;
             }
@@ -129,8 +131,7 @@
                     height: 300,
                     color: "#1d4ed8", // Blue-700
                     background: "#ffffff",
-                    // FIX: Changed Error Correction Level from 'M' (Medium) to 'L' (Low) 
-                    // to increase the maximum data capacity from ~984 bytes to 1262 bytes.
+                    // Using Low Error Correction ('L') for maximum data capacity
                     ecl: "L", 
                 });
 
@@ -152,7 +153,7 @@
                 qrCodeSvg.appendChild(img);
                 
                 qrCodeSvg.classList.remove('hidden');
-                showStatus('QR Code generated successfully! Capacity is now increased (Low Error Correction).', 'success');
+                showStatus('QR Code generated successfully!', 'success');
 
             } catch (error) {
                 console.error("Error generating QR code:", error);
@@ -182,6 +183,7 @@
 
         /**
          * Decodes a QR code from a loaded HTMLImageElement.
+         * Now updates qrInput.value and calls generateQRCode automatically.
          * @param {HTMLImageElement} img - The image element.
          */
         function decodeImage(img) {
@@ -203,13 +205,14 @@
             });
 
             if (code) {
-                decodedOutput.innerHTML = code.data;
-                showStatus(`Successfully decoded: ${code.data.substring(0, 50)}...`, 'success');
-                copyButton.disabled = false;
+                // UPDATE: Use the shared input field for the decoded output
+                qrInput.value = code.data; 
+                showStatus(`Successfully decoded: ${code.data.substring(0, 50)}... The text is now in the shared field.`, 'success');
+                // Auto-generate the QR code from the decoded text for immediate feedback
+                generateQRCode(); 
             } else {
-                decodedOutput.innerHTML = '<span class="text-gray-400">No QR code found in the image. Try a clearer image.</span>';
-                showStatus('Could not find a QR code.', 'warning');
-                copyButton.disabled = true;
+                showStatus('Could not find a QR code in the image. Try a clearer image.', 'warning');
+                // Do not clear the qrInput if decoding fails
             }
         }
 
@@ -220,16 +223,13 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            decodedOutput.innerHTML = '<span class="text-gray-400">Processing image...</span>';
             showStatus('Decoding...', 'info');
-            copyButton.disabled = true;
 
             try {
                 const img = await fileToImage(file);
                 decodeImage(img);
             } catch (error) {
                 console.error("Decoding error:", error);
-                decodedOutput.innerHTML = '<span class="text-red-500">Error processing image.</span>';
                 showStatus('Failed to load or process image.', 'error');
             }
         }
@@ -258,16 +258,13 @@
             // Clear the textarea visual cue
             qrPasteArea.value = 'Image pasted successfully. Decoding...';
 
-            decodedOutput.innerHTML = '<span class="text-gray-400">Processing pasted image...';
             showStatus('Decoding pasted image...', 'info');
-            copyButton.disabled = true;
 
             try {
                 const img = await fileToImage(file);
                 decodeImage(img);
             } catch (error) {
                 console.error("Decoding error:", error);
-                decodedOutput.innerHTML = '<span class="text-red-500">Error processing pasted image.</span>';
                 showStatus('Failed to load or process pasted image.', 'error');
             } finally {
                 // Clear the status text in the textarea after processing
@@ -303,11 +300,12 @@
         }
 
         /**
-         * Copies the decoded text to the clipboard.
+         * Copies the content of the shared text field to the clipboard.
          */
         function copyDecodedText() {
-            const text = decodedOutput.textContent;
-            if (text && text.trim() !== 'Decoded text will appear here.') {
+            // Updated to use the shared qrInput field
+            const text = qrInput.value; 
+            if (text && text.trim() !== '') {
                 try {
                     // Use a temporary textarea for reliable copying in an iframe environment
                     const tempInput = document.createElement('textarea');
@@ -316,11 +314,13 @@
                     tempInput.select();
                     document.execCommand('copy');
                     document.body.removeChild(tempInput);
-                    showStatus('Copied text to clipboard!', 'success');
+                    showStatus('Copied content to clipboard!', 'success');
                 } catch (err) {
                     console.error('Copy failed:', err);
                     showStatus('Copy failed. Please select and copy manually.', 'error');
                 }
+            } else {
+                showStatus('Nothing to copy.', 'warning');
             }
         }
     </script>

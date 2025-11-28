@@ -50,11 +50,13 @@
 
                 <div class="flex items-center justify-center">
                     <div class="w-full border-t border-gray-200"></div>
-                    <span class="px-3 text-sm text-gray-500 bg-white">OR Paste Image</span>
+                    <!-- Added whitespace-nowrap to enforce single line -->
+                    <span class="px-2 text-xs text-gray-500 bg-white whitespace-nowrap">OR Paste Image</span>
                     <div class="w-full border-t border-gray-200"></div>
                 </div>
 
-                <textarea id="qrPasteArea" rows="2" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-[#177B17] focus:border-[#177B17] transition shadow-sm resize-none" placeholder="Paste an image here or press Ctrl+V/Cmd+V while focused..."></textarea>
+                <!-- Updated placeholder text for clarity -->
+                <textarea id="qrPasteArea" rows="2" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-[#177B17] focus:border-[#177B17] transition shadow-sm resize-none" placeholder="Paste an image here or press Ctrl+V / Cmd+V while focused..."></textarea>
             </div>
             
             <div id="decodeStatus" class="p-3 mb-4 rounded-lg border hidden"></div>

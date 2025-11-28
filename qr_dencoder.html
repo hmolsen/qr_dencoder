@@ -3,16 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Utility (Generate & Decode)</title>
+    <title>Software Security QR Code Utility</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load Inter font -->
+    <!-- Load Open Sans font -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7f9fb;
+            font-family: 'Open Sans', sans-serif;
+            /* Using E7E6E6 for a light, off-white background */
+            background-color: #E7E6E6; 
         }
+        /* Custom styles for status messages using the specified color palette */
+        .status-success { background-color: #E6F3E6; color: #177B17; border-color: #177B17; }
+        .status-error { background-color: #F8E6E6; color: #7B1717; border-color: #7B1717; }
+        .status-warning { background-color: #FFFDE6; color: #DFDF17; border-color: #DFDF17; }
+        .status-info { background-color: #E6E6F8; color: #17177B; border-color: #17177B; }
     </style>
     <!-- Library for generating QR codes (SVG based) -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode-svg@1.1.0/lib/qrcode.min.js"></script>
@@ -22,6 +28,8 @@
 <body class="min-h-screen p-4 md:p-8">
 
     <header class="text-center mb-10">
+        <!-- Placeholder for User Logo -->
+        <img id="userLogo" src="" alt="User Logo Placeholder" class="mx-auto h-20 mb-4 rounded-lg" />
         <h1 class="text-4xl font-extrabold text-gray-900 mb-2">
             QR Code Utility
         </h1>
@@ -31,12 +39,14 @@
     <main class="max-w-4xl mx-auto space-y-8">
 
         <!-- 1. QR Code Decoder Section (Input for decoding) -->
-        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl transition duration-300 hover:shadow-3xl border border-green-100">
-            <h2 class="text-2xl font-bold text-green-700 mb-6 border-b pb-2">1. Decode QR Code (Image to Text)</h2>
+        <!-- Removed external border -->
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl transition duration-300 hover:shadow-3xl">
+            <!-- Title changed to black -->
+            <h2 class="text-2xl font-bold text-black mb-6 border-b pb-2">1. Decode QR Code (Image to Text)</h2>
 
             <div class="mb-6 space-y-4">
                 <label for="qrFile" class="block text-sm font-medium text-gray-700 mb-1">Upload QR Code Image:</label>
-                <input type="file" id="qrFile" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 transition" onchange="decodeQRCodeFromImage(event)">
+                <input type="file" id="qrFile" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 transition" onchange="decodeQRCodeFromImage(event)">
 
                 <div class="flex items-center justify-center">
                     <div class="w-full border-t border-gray-200"></div>
@@ -44,31 +54,36 @@
                     <div class="w-full border-t border-gray-200"></div>
                 </div>
 
-                <textarea id="qrPasteArea" rows="2" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition shadow-sm resize-none" placeholder="Paste an image here or press Ctrl+V/Cmd+V while focused..."></textarea>
+                <textarea id="qrPasteArea" rows="2" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-[#177B17] focus:border-[#177B17] transition shadow-sm resize-none" placeholder="Paste an image here or press Ctrl+V/Cmd+V while focused..."></textarea>
             </div>
             
-            <div id="decodeStatus" class="p-3 mb-4 bg-yellow-50 text-yellow-800 rounded-lg hidden"></div>
+            <div id="decodeStatus" class="p-3 mb-4 rounded-lg border hidden"></div>
         </div>
 
         <!-- 2. Shared Text Field (Output of Decode, Input for Generate) -->
-        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl shadow-blue-500/10 border border-gray-200">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">2. Shared Content (Input/Output)</h2>
+        <!-- Removed external border -->
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl">
+            <!-- Title changed to black -->
+            <h2 class="text-2xl font-bold text-black mb-6 border-b pb-2">2. Shared Content (Input/Output)</h2>
             <div class="mb-4">
                 <label for="qrInput" class="block text-sm font-medium text-gray-700 mb-1">QR Code Content:</label>
-                <textarea id="qrInput" rows="6" class="w-full p-4 border-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition shadow-inner resize-none font-mono text-base" placeholder="Enter text here to generate a QR code, or paste/upload an image above to see decoded text."></textarea>
+                <textarea id="qrInput" rows="6" class="w-full p-4 border-2 border-gray-300 rounded-lg focus:ring-[#7B1717] focus:border-[#7B1717] transition shadow-inner resize-none font-mono text-base" placeholder="Enter text here to generate a QR code, or paste/upload an image above to see decoded text."></textarea>
             </div>
-            <!-- The copy button is now associated with the shared input field -->
-            <button onclick="copyDecodedText()" id="copyButton" class="w-full px-4 py-3 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600 transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+            <!-- Copy Button uses primary brand color #7B1717 -->
+            <button onclick="copyDecodedText()" id="copyButton" class="w-full px-4 py-3 bg-[#7B1717] text-white font-semibold rounded-lg hover:bg-[#C05C5C] transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#7B1717] focus:ring-offset-2">
                 Copy Content to Clipboard
             </button>
         </div>
 
 
         <!-- 3. QR Code Generator Section (Output for generation) -->
-        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl transition duration-300 hover:shadow-3xl border border-blue-100">
-            <h2 class="text-2xl font-bold text-blue-700 mb-6 border-b pb-2">3. Generated QR Code (Text to Image)</h2>
+        <!-- Removed external border -->
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl transition duration-300 hover:shadow-3xl">
+            <!-- Title changed to black -->
+            <h2 class="text-2xl font-bold text-black mb-6 border-b pb-2">3. Generated QR Code (Text to Image)</h2>
             
-            <button onclick="generateQRCode()" class="w-full px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            <!-- Generate Button uses primary brand color #7B1717 -->
+            <button onclick="generateQRCode()" class="w-full px-4 py-3 bg-[#7B1717] text-white font-semibold rounded-lg hover:bg-[#C05C5C] transition duration-150 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#7B1717] focus:ring-offset-2">
                 Generate QR Code from Above Content
             </button>
 
@@ -129,7 +144,8 @@
                     padding: 4,
                     width: 300, 
                     height: 300,
-                    color: "#1d4ed8", // Blue-700
+                    // QR Code Color set to primary brand color #7B1717
+                    color: "#7B1717", 
                     background: "#ffffff",
                     // Using Low Error Correction ('L') for maximum data capacity
                     ecl: "L", 
@@ -282,10 +298,11 @@
          */
         function showStatus(message, type) {
             const styles = {
-                success: 'bg-green-100 text-green-800 border-green-300',
-                error: 'bg-red-100 text-red-800 border-red-300',
-                warning: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-                info: 'bg-blue-100 text-blue-800 border-blue-300',
+                // Using the specific color palette for status messages
+                success: 'status-success', 
+                error: 'status-error', 
+                warning: 'status-warning', 
+                info: 'status-info',
             };
 
             decodeStatus.className = `p-3 mb-4 rounded-lg border ${styles[type]} transition`;
